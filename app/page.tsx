@@ -208,7 +208,7 @@ export default function Home() {
   const [panel, setPanel] = useState<Panel>(null);
   const [weather, setWeather] = useState<Weather>("rain");
   const [playing, setPlaying] = useState(false);
-  const [track, setTrack] = useState(0);
+  const [track, setTrack] = useState(() => Math.floor(Math.random() * tracks.length));
   const [progress, setProgress] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -218,6 +218,7 @@ export default function Home() {
   const [mix, setMix] = useState(initialMix);
   const [quote, setQuote] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const trackHistory = useRef<number[]>([]);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const current = tracks[track];
   useNatureAudio(entered, weather, mix);
@@ -273,12 +274,19 @@ export default function Home() {
   };
 
   const changeTrack = (delta: number) => {
-    setTrack((previous) => (previous + delta + tracks.length) % tracks.length);
+    if (delta < 0 && trackHistory.current.length) {
+      setTrack(trackHistory.current.pop()!);
+    } else {
+      trackHistory.current.push(track);
+      let next = track;
+      while (next === track && tracks.length > 1) next = Math.floor(Math.random() * tracks.length);
+      setTrack(next);
+    }
     setProgress(0);
     document.documentElement.animate([{ filter: "brightness(1)" }, { filter: "brightness(1.09)" }, { filter: "brightness(1)" }], { duration: 900 });
   };
 
-  const chooseTrack = (index: number) => { setTrack(index); setPlaying(true); setPanel(null); };
+  const chooseTrack = (index: number) => { if (index !== track) trackHistory.current.push(track); setTrack(index); setPlaying(true); setPanel(null); };
   const seek = (value: number) => { const audio = audioRef.current; if (!audio || !duration) return; audio.currentTime = value / 100 * duration; };
   const formatTime = (seconds: number) => Number.isFinite(seconds) ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2,"0")}` : "0:00";
 
