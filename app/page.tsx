@@ -167,6 +167,35 @@ function Icon({ name }: { name: "play" | "pause" | "next" | "prev" | "heart" | "
   return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
 }
 
+function VinylPlayer({ artwork, title, isPlaying }: { artwork: string; title: string; isPlaying: boolean }) {
+  const disc = useRef<HTMLDivElement>(null);
+  const motion = useRef<Animation | null>(null);
+  const ramp = useRef<number | null>(null);
+  useEffect(() => {
+    if (!disc.current) return;
+    motion.current = disc.current.animate([{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }], { duration: 10500, iterations: Infinity });
+    motion.current.pause();
+    return () => { motion.current?.cancel(); if (ramp.current) cancelAnimationFrame(ramp.current); };
+  }, []);
+  useEffect(() => {
+    const animation = motion.current;
+    if (!animation) return;
+    if (ramp.current) cancelAnimationFrame(ramp.current);
+    if (isPlaying) {
+      animation.playbackRate = Math.max(animation.playbackRate, .18); animation.play();
+      const accelerate = () => { if (!motion.current || !isPlaying) return; motion.current.playbackRate = Math.min(1, motion.current.playbackRate + .045); if (motion.current.playbackRate < 1) ramp.current = requestAnimationFrame(accelerate); };
+      ramp.current = requestAnimationFrame(accelerate);
+    } else {
+      const decelerate = () => { if (!motion.current) return; motion.current.playbackRate = Math.max(0, motion.current.playbackRate - .035); if (motion.current.playbackRate > 0) ramp.current = requestAnimationFrame(decelerate); else motion.current.pause(); };
+      ramp.current = requestAnimationFrame(decelerate);
+    }
+  }, [isPlaying]);
+  return <div className={`turntable ${isPlaying ? "is-playing" : "is-paused"}`}>
+    <div ref={disc} className="vinyl-disc"><div className="vinyl-label" style={{ backgroundImage: `url(${artwork})` }}><span className="sr-only">{title} record</span></div></div>
+    <div className="tonearm" aria-hidden="true"><i className="tonearm-pivot" /><i className="tonearm-rail" /><i className="tonearm-head" /></div>
+  </div>;
+}
+
 export default function Home() {
   const [entered, setEntered] = useState(false);
   const [panel, setPanel] = useState<Panel>(null);
@@ -280,12 +309,12 @@ export default function Home() {
       {panel && <button className="scrim" aria-label="Close panel" onClick={() => setPanel(null)} />}
 
       <section className="player" aria-label="Now playing">
-        <div className={`art ${playing ? "spinning" : ""}`} style={{ backgroundImage: `url(${current.artwork})` }}><span className="sr-only">{current.title} cover</span></div>
+        <VinylPlayer artwork={current.artwork} title={current.title} isPlaying={playing} />
         <div className="song"><small>Now playing · {current.mood}</small><strong>{current.title}</strong><span>{current.artist}</span></div>
         <div className="transport">
           <button className={liked ? "liked" : ""} aria-label="Like this song" onClick={() => setLiked(!liked)}><Icon name="heart" /></button>
           <button aria-label="Previous song" onClick={() => changeTrack(-1)}><Icon name="prev" /></button>
-          <button className="play" aria-label="Open Spotify player" onClick={() => { setSpotifyOpen(true); setPlaying(true); notify("Press play in Spotify — the café will stay open."); }}><Icon name="play" /></button>
+          <button className="play" aria-label={playing ? "Pause music" : "Play music"} onClick={() => { if (!playing) { setSpotifyOpen(true); notify("Press play in Spotify — direct audio links will connect this control."); } setPlaying(!playing); }}><Icon name={playing ? "pause" : "play"} /></button>
           <button aria-label="Next song" onClick={() => changeTrack(1)}><Icon name="next" /></button>
           <button aria-label="Volume"><Icon name="volume" /></button>
         </div>
