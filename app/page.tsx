@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Weather = "clear" | "drizzle" | "rain" | "monsoon" | "fog" | "wind";
 type Panel = "playlist" | "weather" | "ambience" | null;
@@ -26,6 +26,78 @@ const weatherOptions: { key: Weather; label: string; note: string }[] = [
 
 const initialMix = { Bonfire: 45, River: 28, Wind: 12, Rain: 42, Forest: 18 };
 
+function WeatherCanvas({ weather }: { weather: Weather }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    let frame = 0;
+    let width = 0;
+    let height = 0;
+    let last = performance.now();
+    const intensity = weather === "monsoon" ? 1 : weather === "rain" ? .58 : weather === "drizzle" ? .24 : 0;
+    const wind = weather === "wind" ? .72 : weather === "monsoon" ? .38 : .13;
+    type Drop = { x:number; y:number; z:number; speed:number; length:number };
+    type Leaf = { x:number; y:number; size:number; speed:number; phase:number; opacity:number };
+    type Ripple = { x:number; y:number; age:number; life:number };
+    let drops: Drop[] = [];
+    let leaves: Leaf[] = [];
+    let ripples: Ripple[] = [];
+    const resize = () => {
+      const dpr = Math.min(devicePixelRatio, 1.7);
+      width = innerWidth; height = innerHeight;
+      canvas.width = width * dpr; canvas.height = height * dpr;
+      canvas.style.width = `${width}px`; canvas.style.height = `${height}px`;
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drops = Array.from({ length: Math.round(width * intensity * .12) }, () => ({ x:Math.random()*width, y:Math.random()*height, z:.2+Math.random()*.8, speed:520+Math.random()*680, length:5+Math.random()*22 }));
+      leaves = Array.from({ length: Math.round(2 + wind * 8) }, () => ({ x:Math.random()*width, y:Math.random()*height*.72, size:3+Math.random()*6, speed:12+Math.random()*22, phase:Math.random()*6, opacity:.1+Math.random()*.2 }));
+    };
+    const draw = (now:number) => {
+      const dt = Math.min((now-last)/1000, .04); last = now;
+      context.clearRect(0,0,width,height);
+      for (const d of drops) {
+        const drift = (16 + wind * 50) * d.z;
+        context.beginPath(); context.moveTo(d.x,d.y); context.lineTo(d.x-drift*.07,d.y-d.length*d.z);
+        context.strokeStyle=`rgba(190,216,224,${.08+d.z*.23})`; context.lineWidth=.35+d.z*.75; context.stroke();
+        d.y += d.speed*d.z*dt; d.x += drift*dt;
+        if(d.y>height+20){ if(d.z>.66 && Math.random()<.32) ripples.push({x:d.x,y:height*(.69+Math.random()*.22),age:0,life:.7+Math.random()*.45}); d.y=-30;d.x=Math.random()*width; }
+      }
+      ripples = ripples.filter(r=>r.age<r.life);
+      for(const r of ripples){ r.age+=dt; const p=r.age/r.life; context.beginPath();context.ellipse(r.x,r.y,2+p*12,1+p*4,0,0,Math.PI*2);context.strokeStyle=`rgba(180,205,211,${(1-p)*.18})`;context.lineWidth=.6;context.stroke(); }
+      for(const l of leaves){ l.phase+=dt*(1+wind);l.x+=l.speed*(.35+wind)*dt;l.y+=Math.sin(l.phase)*8*dt+wind*2*dt;context.save();context.translate(l.x,l.y);context.rotate(l.phase*.65);context.fillStyle=`rgba(90,111,76,${l.opacity})`;context.beginPath();context.ellipse(0,0,l.size,l.size*.38,0,0,Math.PI*2);context.fill();context.restore();if(l.x>width+20){l.x=-20;l.y=Math.random()*height*.66;} }
+      frame=requestAnimationFrame(draw);
+    };
+    resize(); addEventListener("resize",resize); frame=requestAnimationFrame(draw);
+    return()=>{cancelAnimationFrame(frame);removeEventListener("resize",resize)};
+  },[weather]);
+  return <canvas ref={ref} className="weather-canvas" aria-hidden="true" />;
+}
+
+function useNatureAudio(entered:boolean, weather:Weather, mix:Record<string,number>) {
+  const audio = useRef<{ctx:AudioContext; gains:GainNode[]} | null>(null);
+  useEffect(()=>{
+    if(!entered || audio.current) return;
+    const AudioCtx = window.AudioContext || (window as typeof window & {webkitAudioContext:typeof AudioContext}).webkitAudioContext;
+    const ctx = new AudioCtx();
+    const makeNoise=(seconds:number, color:"rain"|"river"|"wind"|"fire", level:number)=>{
+      const buffer=ctx.createBuffer(1,ctx.sampleRate*seconds,ctx.sampleRate);const data=buffer.getChannelData(0);let brown=0;
+      for(let i=0;i<data.length;i++){const white=Math.random()*2-1;brown=(brown+.02*white)/1.02;data[i]=color==="fire"?(Math.random()<.002?white*.9:brown*.08):color==="river"?brown*2.2:white*.35;}
+      const source=ctx.createBufferSource();source.buffer=buffer;source.loop=true;
+      const filter=ctx.createBiquadFilter();filter.type=color==="wind"?"bandpass":color==="fire"?"lowpass":"highpass";filter.frequency.value=color==="wind"?420:color==="fire"?1100:color==="river"?620:2400;filter.Q.value=color==="wind"?.7:.25;
+      const gain=ctx.createGain();gain.gain.value=level;source.connect(filter).connect(gain).connect(ctx.destination);source.start();return gain;
+    };
+    audio.current={ctx,gains:[makeNoise(5,"fire",.012),makeNoise(7,"river",.018),makeNoise(6,"wind",.004),makeNoise(5,"rain",.012)]};
+    return()=>{ctx.close();audio.current=null};
+  },[entered]);
+  useEffect(()=>{
+    if(!audio.current)return;const {ctx,gains}=audio.current;const rainFactor=weather==="monsoon"?1.45:weather==="rain"?1:weather==="drizzle"?.38:0;
+    const targets=[mix.Bonfire*.00028,mix.River*.00042,mix.Wind*.00022*(weather==="wind"?2.2:1),mix.Rain*.00038*rainFactor];
+    gains.forEach((g,i)=>g.gain.linearRampToValueAtTime(targets[i],ctx.currentTime+2.2));
+  },[weather,mix]);
+}
+
 function Icon({ name }: { name: "play" | "pause" | "next" | "prev" | "heart" | "close" | "volume" }) {
   const paths = {
     play: <path d="M9 6l10 6-10 6V6z" fill="currentColor" />,
@@ -49,8 +121,10 @@ export default function Home() {
   const [liked, setLiked] = useState(false);
   const [toast, setToast] = useState("");
   const [mix, setMix] = useState(initialMix);
+  const [spotifyOpen, setSpotifyOpen] = useState(false);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const current = tracks[track];
+  useNatureAudio(entered, weather, mix);
 
   useEffect(() => {
     const stored = localStorage.getItem("raat-preferences");
@@ -73,11 +147,6 @@ export default function Home() {
     const id = setInterval(() => setProgress((p) => p >= 100 ? 0 : p + 0.08), 1000);
     return () => clearInterval(id);
   }, [playing]);
-
-  const rainCount = weather === "monsoon" ? 95 : weather === "rain" ? 62 : weather === "drizzle" ? 28 : 0;
-  const rain = useMemo(() => Array.from({ length: rainCount }, (_, i) => ({
-    left: `${(i * 37) % 101}%`, delay: `${(i % 17) * -0.13}s`, duration: `${0.55 + (i % 6) * 0.11}s`, opacity: 0.18 + (i % 5) * 0.08,
-  })), [rainCount]);
 
   const notify = (message: string) => {
     setToast(message);
@@ -113,9 +182,9 @@ export default function Home() {
         <div className="clouds" /><div className="fog fog-a" /><div className="fog fog-b" />
         <div className="river-shimmer" />
         <div className="light-string light-string-a">{Array.from({ length: 10 }, (_, i) => <i key={i} />)}</div>
-        <button className="fire" aria-label="Warm the bonfire" onClick={() => { notify("That’s better."); document.querySelector(".fire")?.classList.add("stoked"); setTimeout(() => document.querySelector(".fire")?.classList.remove("stoked"), 2500); }}><span className="flame f1" /><span className="flame f2" /><span className="ember e1" /><span className="ember e2" /></button>
+        <button className="fire" aria-label="Warm the bonfire" onClick={() => { notify("That’s better."); document.querySelector(".fire")?.classList.add("stoked"); setTimeout(() => document.querySelector(".fire")?.classList.remove("stoked"), 2500); }}><span className="heat" /><span className="ember e1" /><span className="ember e2" /></button>
         <button className="free-chair" onClick={() => notify("This one’s free.")} aria-label="An empty chair"><span>This one’s free.</span></button>
-        <div className="rain" aria-hidden="true">{rain.map((r, i) => <i key={i} style={{ left: r.left, animationDelay: r.delay, animationDuration: r.duration, opacity: r.opacity }} />)}</div>
+        <WeatherCanvas weather={weather} />
         <div className="wet-sheen" /><div className="grain" /><div className="vignette" />
       </div>
 
@@ -154,11 +223,15 @@ export default function Home() {
         <div className="transport">
           <button className={liked ? "liked" : ""} aria-label="Like this song" onClick={() => setLiked(!liked)}><Icon name="heart" /></button>
           <button aria-label="Previous song" onClick={() => changeTrack(-1)}><Icon name="prev" /></button>
-          <button className="play" aria-label={playing ? "Pause" : "Play"} onClick={() => setPlaying(!playing)}><Icon name={playing ? "pause" : "play"} /></button>
+          <button className="play" aria-label="Open Spotify player" onClick={() => { setSpotifyOpen(true); setPlaying(true); notify("Press play in Spotify — the café will stay open."); }}><Icon name={playing ? "pause" : "play"} /></button>
           <button aria-label="Next song" onClick={() => changeTrack(1)}><Icon name="next" /></button>
           <button aria-label="Volume"><Icon name="volume" /></button>
         </div>
         <div className="timeline"><time>{`${Math.floor(progress * 2.53 / 60)}:${String(Math.floor(progress * 2.53 % 60)).padStart(2, "0")}`}</time><input aria-label="Song position" type="range" min="0" max="100" value={progress} onChange={(e) => setProgress(Number(e.target.value))} /><time>{current.duration}</time></div>
+      </section>
+      <section className={`spotify-dock ${spotifyOpen ? "open" : ""}`} aria-label="Spotify music player">
+        <button className="spotify-close" onClick={()=>setSpotifyOpen(false)} aria-label="Close Spotify player"><Icon name="close" /></button>
+        <iframe title="Mussoorie After Midnight on Spotify" src="https://open.spotify.com/embed/playlist/37i9dQZF1EIXllVxxOqk5P?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />
       </section>
       <div className={`toast ${toast ? "show" : ""}`} role="status">{toast}</div>
       <div className="location"><span>11:47 PM</span><i /> Landour road, somewhere uphill</div>
