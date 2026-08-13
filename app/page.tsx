@@ -306,7 +306,7 @@ export default function Home() {
         <p className="eyebrow">Somewhere beyond the last road</p>
         <h1>The night found us.<br /><em>The fire kept us here.</em></h1>
         <p className="entry-note">It’s cold outside. Come in.</p>
-        <button className="enter-button" onClick={() => { setEntered(true); setPlaying(true); notify("Take your time."); }}>Enter café <span>→</span></button>
+        <button className="enter-button" onClick={() => { setEntered(true); setPlaying(true); notify("Take your time."); }}>STEP IN, STAY A WHILE <span>→</span></button>
         <small>Sound begins only when you enter</small>
       </section>
 
