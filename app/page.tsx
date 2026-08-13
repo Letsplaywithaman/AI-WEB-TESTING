@@ -235,7 +235,7 @@ export default function Home() {
       {panel && <button className="scrim" aria-label="Close panel" onClick={() => setPanel(null)} />}
 
       <section className="player" aria-label="Now playing">
-        <div className="art" style={{ backgroundImage: `url(${current.artwork})` }}><span className="sr-only">{current.title} cover</span></div>
+        <div className={`art ${playing ? "spinning" : ""}`} style={{ backgroundImage: `url(${current.artwork})` }}><span className="sr-only">{current.title} cover</span></div>
         <div className="song"><small>Now playing · {current.mood}</small><strong>{current.title}</strong><span>{current.artist}</span></div>
         <div className="transport">
           <button className={liked ? "liked" : ""} aria-label="Like this song" onClick={() => setLiked(!liked)}><Icon name="heart" /></button>
