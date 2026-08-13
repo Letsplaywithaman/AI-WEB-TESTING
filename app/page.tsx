@@ -6,7 +6,7 @@ type Weather = "clear" | "drizzle" | "rain" | "monsoon" | "fog" | "wind";
 type Panel = "playlist" | "weather" | "ambience" | null;
 
 const tracks = [
-  { title: "Iktara", artist: "Kavita Seth", duration: "4:13", mood: "Mussoorie After Midnight" },
+  { title: "Iktara", artist: "Kavita Seth", duration: "4:13", mood: "Beyond the last road" },
   { title: "Shaam", artist: "Amit Trivedi, Nikhil D'Souza", duration: "4:44", mood: "Long Drive, No Driving" },
   { title: "Kasoor", artist: "Prateek Kuhad", duration: "3:18", mood: "Hindi Indie Nights" },
   { title: "Aahista", artist: "Arijit Singh, Jonita Gandhi", duration: "5:20", mood: "2 AM Thoughts" },
@@ -25,6 +25,10 @@ const weatherOptions: { key: Weather; label: string; note: string }[] = [
 ];
 
 const initialMix = { Bonfire: 45, River: 28, Wind: 12, Rain: 42, Forest: 18 };
+
+const loveLines = [
+  "Some silences sound better with you in them.", "I stopped looking for the way back.", "You make ordinary nights worth remembering.", "The world softens when you arrive.", "I would recognize your quiet anywhere.", "Somewhere between hello and stay, I found home.", "You are the pause I never want to end.", "Even the rain feels warmer near you.", "I like who the night lets us become.", "No map ever led me somewhere this gentle.", "You feel like a light left on for me.", "The long way is shorter with you.", "I could stay in this almost forever.", "Your name makes the dark less dark.", "Nothing happened. Everything changed.", "I found my favorite place in your presence.", "If this is a dream, let the rain keep falling.", "Some people arrive like remembered songs.", "You make distance forget itself.", "I hope we are never in a hurry again.", "The fire knows we are staying.", "Meet me where the night forgets the time.", "I would choose this quiet, every time.", "You turn waiting into somewhere beautiful.", "There are a thousand stars. I noticed you.", "The cold never reaches the seat beside you.", "You are my favorite kind of familiar.", "This feels less like finding and more like returning.", "I want more evenings that ask nothing of us.", "You make the world feel briefly complete.", "We could be nowhere, and I would still stay.", "A little rain. A little music. You.", "Your quiet is the one I understand.", "I forgot what I was running from.", "The night kept our secret.", "Everything feels closer after midnight.", "I would save this seat in every lifetime.", "You arrived, and the room remembered warmth.", "There is no rush where we are going.", "Some feelings do not need brighter light.", "The safest place was never a place.", "You feel like a story I already know by heart.", "Let the rest of the world keep moving.", "I would miss you even in a room full of you.", "We found a corner the world forgot.", "Stay until the song forgets how to end.", "I like the way time loses us here.", "Maybe home is just being understood quietly.", "The night is kinder when it is ours.", "I did not know peace could have a voice.", "You make leaving feel unnecessary.", "The horizon can wait. I have this.", "Nothing outside this moment needs us.", "I would find you in any weather.", "You are the warmth the fire is trying to become.", "Perhaps we were always on our way here.", "Thodi der aur?"
+];
 
 function WeatherCanvas({ weather }: { weather: Weather }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -122,12 +126,13 @@ export default function Home() {
   const [toast, setToast] = useState("");
   const [mix, setMix] = useState(initialMix);
   const [spotifyOpen, setSpotifyOpen] = useState(false);
+  const [quote, setQuote] = useState(0);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const current = tracks[track];
   useNatureAudio(entered, weather, mix);
 
   useEffect(() => {
-    const stored = localStorage.getItem("raat-preferences");
+    const stored = localStorage.getItem("you-feel-like-home-preferences");
     if (stored) {
       try {
         const saved = JSON.parse(stored);
@@ -139,7 +144,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("raat-preferences", JSON.stringify({ weather, mix, returning: entered }));
+    localStorage.setItem("you-feel-like-home-preferences", JSON.stringify({ weather, mix, returning: entered }));
   }, [weather, mix, entered]);
 
   useEffect(() => {
@@ -147,6 +152,12 @@ export default function Home() {
     const id = setInterval(() => setProgress((p) => p >= 100 ? 0 : p + 0.08), 1000);
     return () => clearInterval(id);
   }, [playing]);
+
+  useEffect(() => {
+    if (!entered) return;
+    const id = setInterval(() => setQuote((q) => (q + 1) % loveLines.length), 11000);
+    return () => clearInterval(id);
+  }, [entered]);
 
   const notify = (message: string) => {
     setToast(message);
@@ -168,16 +179,16 @@ export default function Home() {
   };
 
   const share = async () => {
-    const text = `I saved you a seat somewhere in Mussoorie. 🌙 ${current.title} is playing while it’s ${weather === "rain" ? "raining" : weather}.`;
+    const text = `I saved you a seat beyond the last road. 🌙 ${current.title} is playing while it’s ${weather === "rain" ? "raining" : weather}.`;
     try {
-      if (navigator.share) await navigator.share({ title: "Raat — Mussoorie", text, url: location.href });
+      if (navigator.share) await navigator.share({ title: "You feel like home.", text, url: location.href });
       else { await navigator.clipboard.writeText(`${text} ${location.href}`); notify("A seat has been saved."); }
     } catch { /* share was dismissed */ }
   };
 
   return (
     <main className={`cafe weather-${weather} ${entered ? "is-entered" : "is-arriving"}`}>
-      <div className="scene" role="img" aria-label="A hidden open-air café above a mountain stream in Mussoorie at night">
+      <div className="scene" role="img" aria-label="A hidden open-air café above a mountain stream in an endless night">
         <div className="scene-photo" />
         <div className="clouds" /><div className="fog fog-a" /><div className="fog fog-b" />
         <div className="river-shimmer" />
@@ -189,15 +200,15 @@ export default function Home() {
       </div>
 
       <section className="entry" aria-hidden={entered}>
-        <p className="eyebrow">30.4598° N · 78.0644° E</p>
-        <h1>Somewhere in Mussoorie,<br /><em>the café is still open.</em></h1>
+        <p className="eyebrow">Somewhere beyond the last road</p>
+        <h1>The night found us.<br /><em>The fire kept us here.</em></h1>
         <p className="entry-note">It’s cold outside. Come in.</p>
         <button className="enter-button" onClick={() => { setEntered(true); setPlaying(true); notify("Take your time."); }}>Enter café <span>→</span></button>
         <small>Sound begins only when you enter</small>
       </section>
 
       <header className="topbar">
-        <button className="brand" onClick={() => notify("Kahin Mussoorie mein.")} aria-label="Raat home"><span>R</span>RAAT<small>Mussoorie · after dark</small></button>
+        <button className="brand" onClick={() => notify("You feel like home.")} aria-label="You feel like home"><span>Y</span>YOU FEEL LIKE HOME.<small>Somewhere after dark</small></button>
         <nav aria-label="Café controls">
           <button onClick={() => setPanel(panel === "playlist" ? null : "playlist")}>Playing in the café</button>
           <button onClick={() => setPanel(panel === "weather" ? null : "weather")}><span className="weather-dot" /> Mausam</button>
@@ -208,12 +219,12 @@ export default function Home() {
 
       <aside className={`drawer ${panel ? "open" : ""}`} aria-hidden={!panel}>
         <div className="drawer-head">
-          <div><p>{panel === "playlist" ? "Mussoorie after midnight" : panel === "weather" ? "Choose your night" : "Nature, nearby"}</p><h2>{panel === "playlist" ? "Playing in the café" : panel === "weather" ? "Mausam" : "Ambience"}</h2></div>
+          <div><p>{panel === "playlist" ? "Beyond the last road" : panel === "weather" ? "Choose your night" : "Nature, nearby"}</p><h2>{panel === "playlist" ? "Playing by the fire" : panel === "weather" ? "Mausam" : "Ambience"}</h2></div>
           <button className="icon-button" onClick={() => setPanel(null)} aria-label="Close panel"><Icon name="close" /></button>
         </div>
         {panel === "playlist" && <div className="track-list">{tracks.map((item, i) => <button key={item.title} className={i === track ? "active" : ""} onClick={() => { setTrack(i); setProgress(0); setPlaying(true); }}><span className="track-no">{i === track && playing ? <b className="wave">▮▮▮</b> : String(i + 1).padStart(2, "0")}</span><span><strong>{item.title}</strong><small>{item.artist}</small></span><time>{item.duration}</time></button>)}</div>}
         {panel === "weather" && <div className="weather-list"><div className="mode-switch"><button className="selected">Choose my mood</button><button onClick={() => notify("Live weather is coming soon.")}>Live Mausam</button></div>{weatherOptions.map((item) => <button key={item.key} className={weather === item.key ? "active" : ""} onClick={() => chooseWeather(item.key)}><span className={`weather-symbol ${item.key}`} /><span><strong>{item.label}</strong><small>{item.note}</small></span>{weather === item.key && <i>Now</i>}</button>)}</div>}
-        {panel === "ambience" && <div className="mixer">{Object.entries(mix).map(([name, value]) => <label key={name}><span><strong>{name}</strong><small>{value === 0 ? "off" : `${value}%`}</small></span><input aria-label={`${name} ambience level`} type="range" min="0" max="100" value={value} onChange={(e) => setMix({ ...mix, [name]: Number(e.target.value) })} /></label>)}<p>Music stays in front. The mountain stays close.</p></div>}
+        {panel === "ambience" && <div className="mixer">{Object.entries(mix).map(([name, value]) => <label key={name}><span><strong>{name}</strong><small>{value === 0 ? "off" : `${value}%`}</small></span><input aria-label={`${name} ambience level`} type="range" min="0" max="100" value={value} onChange={(e) => setMix({ ...mix, [name]: Number(e.target.value) })} /></label>)}<p>Music stays in front. The night stays close.</p></div>}
       </aside>
       {panel && <button className="scrim" aria-label="Close panel" onClick={() => setPanel(null)} />}
 
@@ -231,10 +242,11 @@ export default function Home() {
       </section>
       <section className={`spotify-dock ${spotifyOpen ? "open" : ""}`} aria-label="Spotify music player">
         <button className="spotify-close" onClick={()=>setSpotifyOpen(false)} aria-label="Close Spotify player"><Icon name="close" /></button>
-        <iframe title="Mussoorie After Midnight on Spotify" src="https://open.spotify.com/embed/playlist/37i9dQZF1EIXllVxxOqk5P?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />
+        <iframe title="After midnight on Spotify" src="https://open.spotify.com/embed/playlist/37i9dQZF1EIXllVxxOqk5P?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />
       </section>
+      <div className="love-line" aria-live="polite" key={quote}>{loveLines[quote]}</div>
       <div className={`toast ${toast ? "show" : ""}`} role="status">{toast}</div>
-      <div className="location"><span>11:47 PM</span><i /> Landour road, somewhere uphill</div>
+      <div className="location"><span>11:47 PM</span><i /> Past the last light, somewhere quiet</div>
     </main>
   );
 }

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Raat — A café somewhere in Mussoorie",
-  description: "A secret Mussoorie café that only opens after dark. Music, rain, river and endless night.",
+  title: "You feel like home.",
+  description: "A hidden place beyond the last road—music, rain, fire, and an endless night that feels like home.",
   icons: { icon: "/favicon.svg" },
 };
 
