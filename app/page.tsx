@@ -6,13 +6,20 @@ type Weather = "clear" | "drizzle" | "rain" | "monsoon" | "fog" | "wind";
 type Panel = "playlist" | "weather" | "ambience" | null;
 
 const tracks = [
-  { title: "Iktara", artist: "Kavita Seth", duration: "4:13", mood: "Beyond the last road" },
-  { title: "Shaam", artist: "Amit Trivedi, Nikhil D'Souza", duration: "4:44", mood: "Long Drive, No Driving" },
-  { title: "Kasoor", artist: "Prateek Kuhad", duration: "3:18", mood: "Hindi Indie Nights" },
-  { title: "Aahista", artist: "Arijit Singh, Jonita Gandhi", duration: "5:20", mood: "2 AM Thoughts" },
-  { title: "Kho Gaye Hum Kahan", artist: "Jasleen Royal, Prateek Kuhad", duration: "3:33", mood: "Khamoshi" },
-  { title: "Tu Kisi Rail Si", artist: "Swanand Kirkire", duration: "3:50", mood: "Bonfire Sessions" },
-  { title: "Sweet Disposition", artist: "The Temper Trap", duration: "3:51", mood: "English After Midnight" },
+  { id: "2mVqfKbKGmxVXlVswhlI5T", title: "Chaap Tilak", artist: "Abida Parveen, Rahat Fateh Ali Khan", mood: "By the fire", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e025108a8e8bbaaea01e384535a" },
+  { id: "57lbKSNbLVzxEK9Z3Kz2tN", title: "Nazra", artist: "Your night selection", mood: "After dark", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021040f1b7865ba47ce5688103" },
+  { id: "2kdLpMajZ2VoKEAv9nGsUz", title: "Kaahe Mose", artist: "Your night selection", mood: "Quiet hours", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021f2c1b67a525cb5b6ccbb7fd" },
+  { id: "60ZP1x8MShkdYChIDMV2sk", title: "Musu Musu", artist: "Your night selection", mood: "Warm lights", artwork: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e024d130aa779f503c703ea1591" },
+  { id: "1ZiReD9pPTttQWwSoYqdyH", title: "Aankhon Se Batana", artist: "Your night selection", mood: "Unsaid things", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0216fc8a384ed52ccb50d3b782" },
+  { id: "3jtKSUiVDowKNBqVQbWaig", title: "Iktara", artist: "Your night selection", mood: "Somewhere familiar", artwork: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e0202ef23e492fb485d08068845" },
+  { id: "61IEe4ujPKOU7OIyubydfz", title: "Dooba Dooba", artist: "Your night selection", mood: "Rain on stone", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e026e9fed2a5034e61111d785b1" },
+  { id: "3fWMFwaJil8fD14JCgwbcL", title: "Aaoge Jab Tum", artist: "Your night selection", mood: "A seat saved", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0252fe6875028c892308ffc2f7" },
+  { id: "7cWnks0lsRtpAi87COOiXK", title: "O Re Piya", artist: "Your night selection", mood: "Past midnight", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02108d10d84153ff78d2197f62" },
+  { id: "0TL0LFcwIBF5eX7arDIKxY", title: "Husn", artist: "Your night selection", mood: "Softly remembered", artwork: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e020d3449f333a83a25feb423f8" },
+  { id: "4VsP4Dm8gsibRxB5I2hEkw", title: "Kahani Suno 2.0", artist: "Your night selection", mood: "Stories by firelight", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e024697d4ee22b3f63c17a3b9ec" },
+  { id: "7nPCAO0Q9AHbM7PWyj9O98", title: "Kho Gaye Hum Kahan", artist: "Your night selection", mood: "Lost together", artwork: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02563e078ad6506c79c9f3292a" },
+  { id: "5ELZucrxfmkBOPP9JhfDIf", title: "Aahista", artist: "Your night selection", mood: "Take it slowly", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02bc5ff3b3f7643c3443bf526f" },
+  { id: "0X5jMLCYWZjuXHRc1zp0G6", title: "Tu Jhoom", artist: "Your night selection", mood: "Stay a little longer", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02778ce20f0ce76fa3050b7558" },
 ];
 
 const weatherOptions: { key: Weather; label: string; note: string }[] = [
@@ -222,14 +229,14 @@ export default function Home() {
           <div><p>{panel === "playlist" ? "Beyond the last road" : panel === "weather" ? "Choose your night" : "Nature, nearby"}</p><h2>{panel === "playlist" ? "Playing by the fire" : panel === "weather" ? "Mausam" : "Ambience"}</h2></div>
           <button className="icon-button" onClick={() => setPanel(null)} aria-label="Close panel"><Icon name="close" /></button>
         </div>
-        {panel === "playlist" && <div className="track-list">{tracks.map((item, i) => <button key={item.title} className={i === track ? "active" : ""} onClick={() => { setTrack(i); setProgress(0); setPlaying(true); }}><span className="track-no">{i === track && playing ? <b className="wave">▮▮▮</b> : String(i + 1).padStart(2, "0")}</span><span><strong>{item.title}</strong><small>{item.artist}</small></span><time>{item.duration}</time></button>)}</div>}
+        {panel === "playlist" && <div className="track-list">{tracks.map((item, i) => <button key={item.id} className={i === track ? "active" : ""} onClick={() => { setTrack(i); setProgress(0); setPlaying(true); setSpotifyOpen(true); }}><span className="track-no">{i === track && playing ? <b className="wave">▮▮▮</b> : String(i + 1).padStart(2, "0")}</span><span><strong>{item.title}</strong><small>{item.artist}</small></span><time>Spotify</time></button>)}</div>}
         {panel === "weather" && <div className="weather-list"><div className="mode-switch"><button className="selected">Choose my mood</button><button onClick={() => notify("Live weather is coming soon.")}>Live Mausam</button></div>{weatherOptions.map((item) => <button key={item.key} className={weather === item.key ? "active" : ""} onClick={() => chooseWeather(item.key)}><span className={`weather-symbol ${item.key}`} /><span><strong>{item.label}</strong><small>{item.note}</small></span>{weather === item.key && <i>Now</i>}</button>)}</div>}
         {panel === "ambience" && <div className="mixer">{Object.entries(mix).map(([name, value]) => <label key={name}><span><strong>{name}</strong><small>{value === 0 ? "off" : `${value}%`}</small></span><input aria-label={`${name} ambience level`} type="range" min="0" max="100" value={value} onChange={(e) => setMix({ ...mix, [name]: Number(e.target.value) })} /></label>)}<p>Music stays in front. The night stays close.</p></div>}
       </aside>
       {panel && <button className="scrim" aria-label="Close panel" onClick={() => setPanel(null)} />}
 
       <section className="player" aria-label="Now playing">
-        <div className="art"><span>रात</span><i /></div>
+        <div className="art" style={{ backgroundImage: `url(${current.artwork})` }}><span className="sr-only">{current.title} cover</span></div>
         <div className="song"><small>Now playing · {current.mood}</small><strong>{current.title}</strong><span>{current.artist}</span></div>
         <div className="transport">
           <button className={liked ? "liked" : ""} aria-label="Like this song" onClick={() => setLiked(!liked)}><Icon name="heart" /></button>
@@ -238,11 +245,11 @@ export default function Home() {
           <button aria-label="Next song" onClick={() => changeTrack(1)}><Icon name="next" /></button>
           <button aria-label="Volume"><Icon name="volume" /></button>
         </div>
-        <div className="timeline"><time>{`${Math.floor(progress * 2.53 / 60)}:${String(Math.floor(progress * 2.53 % 60)).padStart(2, "0")}`}</time><input aria-label="Song position" type="range" min="0" max="100" value={progress} onChange={(e) => setProgress(Number(e.target.value))} /><time>{current.duration}</time></div>
+        <div className="timeline"><time>{playing ? "Live" : "—"}</time><input aria-label="Visual song progress" type="range" min="0" max="100" value={progress} onChange={(e) => setProgress(Number(e.target.value))} /><time>Spotify</time></div>
       </section>
       <section className={`spotify-dock ${spotifyOpen ? "open" : ""}`} aria-label="Spotify music player">
         <button className="spotify-close" onClick={()=>setSpotifyOpen(false)} aria-label="Close Spotify player"><Icon name="close" /></button>
-        <iframe title="After midnight on Spotify" src="https://open.spotify.com/embed/playlist/37i9dQZF1EIXllVxxOqk5P?utm_source=generator&theme=0" width="100%" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />
+        <iframe key={current.id} title={`${current.title} on Spotify`} src={`https://open.spotify.com/embed/track/${current.id}?utm_source=generator&theme=0`} width="100%" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />
       </section>
       <div className="love-line" aria-live="polite" key={quote}>{loveLines[quote]}</div>
       <div className={`toast ${toast ? "show" : ""}`} role="status">{toast}</div>
