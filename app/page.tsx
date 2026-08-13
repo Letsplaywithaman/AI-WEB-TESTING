@@ -319,7 +319,7 @@ export default function Home() {
       </section>
 
       <header className="topbar">
-        <button className="brand" onClick={() => notify("Hey Home 🤍 !!!")} aria-label="Hey Home"><strong>Hey Home 🤍 !!!</strong><small>its been Too long, take me with you</small></button>
+        <button className="brand" onClick={() => notify("Hey Home 🤍 !!!")} aria-label="Hey Home"><img src="/you-feel-like-home-logo.png" alt="" /><span><strong>Hey Home 🤍 !!!</strong><small>its been Too long, take me with you</small></span></button>
         <nav aria-label="Café controls">
           <button onClick={() => setPanel(panel === "playlist" ? null : "playlist")}>Playing in the café</button>
           <button onClick={() => setPanel(panel === "weather" ? null : "weather")}><span className="weather-dot" /> Mausam</button>
