@@ -37,6 +37,51 @@ const loveLines = [
   "Some silences sound better with you in them.", "I stopped looking for the way back.", "You make ordinary nights worth remembering.", "The world softens when you arrive.", "I would recognize your quiet anywhere.", "Somewhere between hello and stay, I found home.", "You are the pause I never want to end.", "Even the rain feels warmer near you.", "I like who the night lets us become.", "No map ever led me somewhere this gentle.", "You feel like a light left on for me.", "The long way is shorter with you.", "I could stay in this almost forever.", "Your name makes the dark less dark.", "Nothing happened. Everything changed.", "I found my favorite place in your presence.", "If this is a dream, let the rain keep falling.", "Some people arrive like remembered songs.", "You make distance forget itself.", "I hope we are never in a hurry again.", "The fire knows we are staying.", "Meet me where the night forgets the time.", "I would choose this quiet, every time.", "You turn waiting into somewhere beautiful.", "There are a thousand stars. I noticed you.", "The cold never reaches the seat beside you.", "You are my favorite kind of familiar.", "This feels less like finding and more like returning.", "I want more evenings that ask nothing of us.", "You make the world feel briefly complete.", "We could be nowhere, and I would still stay.", "A little rain. A little music. You.", "Your quiet is the one I understand.", "I forgot what I was running from.", "The night kept our secret.", "Everything feels closer after midnight.", "I would save this seat in every lifetime.", "You arrived, and the room remembered warmth.", "There is no rush where we are going.", "Some feelings do not need brighter light.", "The safest place was never a place.", "You feel like a story I already know by heart.", "Let the rest of the world keep moving.", "I would miss you even in a room full of you.", "We found a corner the world forgot.", "Stay until the song forgets how to end.", "I like the way time loses us here.", "Maybe home is just being understood quietly.", "The night is kinder when it is ours.", "I did not know peace could have a voice.", "You make leaving feel unnecessary.", "The horizon can wait. I have this.", "Nothing outside this moment needs us.", "I would find you in any weather.", "You are the warmth the fire is trying to become.", "Perhaps we were always on our way here.", "Thodi der aur?"
 ];
 
+const cafeVideo = "https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Video%20-%20tst";
+
+function SeamlessBackgroundVideo() {
+  const videos = [useRef<HTMLVideoElement>(null), useRef<HTMLVideoElement>(null)];
+  const [activeVideo, setActiveVideo] = useState(0);
+  const fading = useRef(false);
+
+  const crossfade = async (from: number) => {
+    if (fading.current || from !== activeVideo) return;
+    const next = from === 0 ? 1 : 0;
+    const outgoing = videos[from].current;
+    const incoming = videos[next].current;
+    if (!outgoing || !incoming) return;
+    fading.current = true;
+    incoming.currentTime = 0;
+    try { await incoming.play(); } catch { outgoing.currentTime = 0; fading.current = false; return; }
+    setActiveVideo(next);
+    window.setTimeout(() => {
+      outgoing.pause();
+      outgoing.currentTime = 0;
+      fading.current = false;
+    }, 1100);
+  };
+
+  const watchEnding = (index: number) => {
+    const video = videos[index].current;
+    if (video && video.duration && video.duration - video.currentTime < 1.15) void crossfade(index);
+  };
+
+  return <div className="scene-photo" aria-hidden="true">
+    {[0, 1].map((index) => <video
+      key={index}
+      ref={videos[index]}
+      className={activeVideo === index ? "active" : ""}
+      autoPlay={index === 0}
+      muted
+      playsInline
+      preload={index === 0 ? "auto" : "metadata"}
+      poster="/cafe-cinematic-clean.png"
+      onTimeUpdate={() => watchEnding(index)}
+      onEnded={() => void crossfade(index)}
+    ><source src={cafeVideo} type="video/mp4" /></video>)}
+  </div>;
+}
+
 function WeatherCanvas({ weather }: { weather: Weather }) {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -196,11 +241,7 @@ export default function Home() {
   return (
     <main className={`cafe weather-${weather} ${entered ? "is-entered" : "is-arriving"}`}>
       <div className="scene" role="img" aria-label="A hidden open-air café above a mountain stream in an endless night">
-        <div className="scene-photo" aria-hidden="true">
-          <video autoPlay muted loop playsInline preload="metadata" poster="/cafe-cinematic-clean.png">
-            <source src="https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Video%20-%20tst" type="video/mp4" />
-          </video>
-        </div>
+        <SeamlessBackgroundVideo />
         <div className="clouds" /><div className="fog fog-a" /><div className="fog fog-b" />
         <div className="river-shimmer" />
         <button className="fire" aria-label="Warm the bonfire" onClick={() => { notify("That’s better."); document.querySelector(".fire")?.classList.add("stoked"); setTimeout(() => document.querySelector(".fire")?.classList.remove("stoked"), 2500); }}><span className="heat" /><span className="ember e1" /><span className="ember e2" /></button>
