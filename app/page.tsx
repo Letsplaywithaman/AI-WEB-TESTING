@@ -311,7 +311,7 @@ export default function Home() {
       </section>
 
       <header className="topbar">
-        <button className="brand" onClick={() => notify("You feel like home.")} aria-label="You feel like home"><span>Y</span>YOU FEEL LIKE HOME.<small>Somewhere after dark</small></button>
+        <button className="brand" onClick={() => notify("Hey Home 🤍 !!!")} aria-label="Hey Home"><strong>Hey Home 🤍 !!!</strong><small>its been Too long, take me with you</small></button>
         <nav aria-label="Café controls">
           <button onClick={() => setPanel(panel === "playlist" ? null : "playlist")}>Playing in the café</button>
           <button onClick={() => setPanel(panel === "weather" ? null : "weather")}><span className="weather-dot" /> Mausam</button>
