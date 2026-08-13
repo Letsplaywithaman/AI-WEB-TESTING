@@ -6,20 +6,27 @@ type Weather = "clear" | "drizzle" | "rain" | "monsoon" | "fog" | "wind";
 type Panel = "playlist" | "weather" | "ambience" | null;
 
 const tracks = [
-  { id: "2mVqfKbKGmxVXlVswhlI5T", title: "Chaap Tilak", artist: "Abida Parveen, Rahat Fateh Ali Khan", mood: "By the fire", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e025108a8e8bbaaea01e384535a" },
-  { id: "57lbKSNbLVzxEK9Z3Kz2tN", title: "Nazra", artist: "Your night selection", mood: "After dark", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021040f1b7865ba47ce5688103" },
-  { id: "2kdLpMajZ2VoKEAv9nGsUz", title: "Kaahe Mose", artist: "Your night selection", mood: "Quiet hours", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021f2c1b67a525cb5b6ccbb7fd" },
-  { id: "60ZP1x8MShkdYChIDMV2sk", title: "Musu Musu", artist: "Your night selection", mood: "Warm lights", artwork: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e024d130aa779f503c703ea1591" },
-  { id: "1ZiReD9pPTttQWwSoYqdyH", title: "Aankhon Se Batana", artist: "Your night selection", mood: "Unsaid things", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0216fc8a384ed52ccb50d3b782" },
-  { id: "3jtKSUiVDowKNBqVQbWaig", title: "Iktara", artist: "Your night selection", mood: "Somewhere familiar", artwork: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e0202ef23e492fb485d08068845" },
-  { id: "61IEe4ujPKOU7OIyubydfz", title: "Dooba Dooba", artist: "Your night selection", mood: "Rain on stone", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e026e9fed2a5034e61111d785b1" },
-  { id: "3fWMFwaJil8fD14JCgwbcL", title: "Aaoge Jab Tum", artist: "Your night selection", mood: "A seat saved", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0252fe6875028c892308ffc2f7" },
-  { id: "7cWnks0lsRtpAi87COOiXK", title: "O Re Piya", artist: "Your night selection", mood: "Past midnight", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02108d10d84153ff78d2197f62" },
-  { id: "0TL0LFcwIBF5eX7arDIKxY", title: "Husn", artist: "Your night selection", mood: "Softly remembered", artwork: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e020d3449f333a83a25feb423f8" },
-  { id: "4VsP4Dm8gsibRxB5I2hEkw", title: "Kahani Suno 2.0", artist: "Your night selection", mood: "Stories by firelight", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e024697d4ee22b3f63c17a3b9ec" },
-  { id: "7nPCAO0Q9AHbM7PWyj9O98", title: "Kho Gaye Hum Kahan", artist: "Your night selection", mood: "Lost together", artwork: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02563e078ad6506c79c9f3292a" },
-  { id: "5ELZucrxfmkBOPP9JhfDIf", title: "Aahista", artist: "Your night selection", mood: "Take it slowly", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02bc5ff3b3f7643c3443bf526f" },
-  { id: "0X5jMLCYWZjuXHRc1zp0G6", title: "Tu Jhoom", artist: "Your night selection", mood: "Stay a little longer", artwork: "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02778ce20f0ce76fa3050b7558" },
+  { id:"night-changes",title:"Night Changes",artist:"One Direction",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/One%20Direction%20-%20Night%20Changes.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"perfect",title:"Perfect",artist:"Ed Sheeran",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Ed%20Sheeran%20-%20Perfect%20%28Official%20Music%20Video%29.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"dekha-hi-nahi",title:"Dekha Hi Nahi",artist:"Osho Jain",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Osho%20Jain%20-%20Dekha%20Hi%20Nahi.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"ganga-ke-kinare",title:"Ganga Ke Kinare",artist:"Bunny Sagar",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Ganga%20Ke%20Kinare%20Bunny%20Sagar%20Kripa%20Record.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"suniyan-suniyan",title:"Suniyan Suniyan",artist:"Juss × MixSingh",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/SUNIYAN%20SUNIYAN%20%28Official%20Video%29%20Juss%20x%20MixSingh.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"teri-yaad",title:"Teri Yaad",artist:"Aditya Rikhari",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Aditya%20Rikhari%20%E2%80%93%20TERI%20YAAD%20%28Video%29.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"aaoge-tum-kabhi",title:"Aaoge Tum Kabhi",artist:"The Local Train",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/The%20Local%20Train%20-%20Aaoge%20Tum%20Kabhi%20%28Official%29.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"jo-tum-mere-ho",title:"Jo Tum Mere Ho",artist:"Anuv Jain",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Anuv%20Jain%20-%20Jo%20Tum%20Mere%20Ho.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"arz-kiya-hai",title:"Arz Kiya Hai",artist:"Anuv Jain",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Anuv%20Jain%20-%20Arz%20Kiya%20Hai%20_%20Coke%20Studio%20Bharat.mp4",format:"mp4",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"taare",title:"Taare",artist:"Farak",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Farak%20-%20Taare%20Official%20Music%20Video.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"sun-sajna",title:"Sun Sajna",artist:"Tanishk Bagchi",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/SUN%20SAJNA%20%28Official%20Video%29_%20TANISHK%20BAGCHI%20_%20LATEST%20HINDI%20SONG%20_%20BHUSHAN%20KUMAR%20%5BMpVGLuw3WyU%5D.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"finding-her",title:"Finding Her",artist:"Kushagra",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Kushagra%20-%20Finding%20Her%20%28Lyrics%29.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"khat",title:"Khat",artist:"Navjot Ahuja",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Navjot%20Ahuja%20-%20Khat%20%28Lyrics%29%20Tere%20liye%20mandir%20jaaun%20Tere%20naam%20ka%20dia%20jalaaun.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"kasoor",title:"Kasoor (Acoustic)",artist:"Prateek Kuhad",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Kasoor%20%28Acoustic%29%20-%20Prateek%20Kuhad%20_%20Official%20Lyric%20Video%20%F0%9F%8C%BB%E2%9C%A8%20%5BiOIF74Hk80A%5D.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"husn",title:"Husn",artist:"Anuv Jain",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Anuv%20Jain%20-%20HUSN%20%28Official%20Video%29.mp3",format:"mp3",duration:0,artwork:"https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e020d3449f333a83a25feb423f8" },
+  { id:"banjaare-barsaat",title:"Banjaare Barsaat × Spider-Man",artist:"Brand New Day Edition",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Banjaare%20Barsaat%20x%20Spider-Man%20%28Brand%20New%20Day%20Edition%29.mp3",format:"mp3",duration:0,artwork:"/cafe-cinematic-clean.png" },
+  { id:"aankhon-se-batana",title:"Aankhon Se Batana",artist:"Dikshant",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Aankhon%20Se%20Batana%20%E2%80%93%20Dikshant%20Viral%20Song%20Official%20Video.mp3",format:"mp3",duration:0,artwork:"https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e0216fc8a384ed52ccb50d3b782" },
+  { id:"musu-musu",title:"Musu Musu",artist:"Shaan",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Musu%20Musu%20Full%20Video%20-%20Pyaar%20Mein%20Kabhi%20Kabhi%20Dino%20Morea%2CRinke%20Shaan%20Vishal%20Dadlani.mp3",format:"mp3",duration:0,artwork:"https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e024d130aa779f503c703ea1591" },
+  { id:"kaahe-mose",title:"Kaahe Mose",artist:"Garvit–Priyansh",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Kaahe%20Mose%20%28Music%20Video%29_%20Garvit-Priyansh%20_%20Eshaan%20Duggal%20_%20Kashish%20Panchpuri%20_%20Kahe%20Mose%20Nain%20%5Bzx_3gmcskZo%5D.mp3",format:"mp3",duration:0,artwork:"https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021f2c1b67a525cb5b6ccbb7fd" },
+  { id:"nazra",title:"Nazra",artist:"KNOJIA",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Nazra%20%E2%80%93%20KNOJIA%20Official%20Music%20Video%202025.mp3",format:"mp3",duration:0,artwork:"https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e021040f1b7865ba47ce5688103" },
+  { id:"chaap-tilak",title:"Chaap Tilak",artist:"Abida Parveen & Rahat Fateh Ali Khan",src:"https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Coke%20Studio%20Season%207_%20Chaap%20Tilak_%20Abida%20Parveen%20%26%20Rahat%20Fateh%20Ali%20Khan%20%5B7SDrjwtfKMk%5D.mp3",format:"mp3",duration:0,artwork:"https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e025108a8e8bbaaea01e384535a" },
 ];
 
 const weatherOptions: { key: Weather; label: string; note: string }[] = [
@@ -202,12 +209,15 @@ export default function Home() {
   const [weather, setWeather] = useState<Weather>("rain");
   const [playing, setPlaying] = useState(false);
   const [track, setTrack] = useState(0);
-  const [progress, setProgress] = useState(34);
+  const [progress, setProgress] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(.82);
   const [liked, setLiked] = useState(false);
   const [toast, setToast] = useState("");
   const [mix, setMix] = useState(initialMix);
-  const [spotifyOpen, setSpotifyOpen] = useState(false);
   const [quote, setQuote] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const current = tracks[track];
   useNatureAudio(entered, weather, mix);
@@ -228,10 +238,19 @@ export default function Home() {
     localStorage.setItem("you-feel-like-home-preferences", JSON.stringify({ weather, mix, returning: entered }));
   }, [weather, mix, entered]);
 
+  useEffect(() => { if (audioRef.current) audioRef.current.volume = volume; }, [volume]);
+
   useEffect(() => {
-    if (!playing) return;
-    const id = setInterval(() => setProgress((p) => p >= 100 ? 0 : p + 0.08), 1000);
-    return () => clearInterval(id);
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.load(); setElapsed(0); setDuration(0); setProgress(0);
+    if (playing) void audio.play().catch(() => setPlaying(false));
+  }, [track]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (playing) void audio.play().catch(() => setPlaying(false)); else audio.pause();
   }, [playing]);
 
   useEffect(() => {
@@ -254,10 +273,14 @@ export default function Home() {
   };
 
   const changeTrack = (delta: number) => {
-    setTrack((track + delta + tracks.length) % tracks.length);
+    setTrack((previous) => (previous + delta + tracks.length) % tracks.length);
     setProgress(0);
     document.documentElement.animate([{ filter: "brightness(1)" }, { filter: "brightness(1.09)" }, { filter: "brightness(1)" }], { duration: 900 });
   };
+
+  const chooseTrack = (index: number) => { setTrack(index); setPlaying(true); setPanel(null); };
+  const seek = (value: number) => { const audio = audioRef.current; if (!audio || !duration) return; audio.currentTime = value / 100 * duration; };
+  const formatTime = (seconds: number) => Number.isFinite(seconds) ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2,"0")}` : "0:00";
 
   const share = async () => {
     const text = `I saved you a seat beyond the last road. 🌙 ${current.title} is playing while it’s ${weather === "rain" ? "raining" : weather}.`;
@@ -302,27 +325,24 @@ export default function Home() {
           <div><p>{panel === "playlist" ? "Beyond the last road" : panel === "weather" ? "Choose your night" : "Nature, nearby"}</p><h2>{panel === "playlist" ? "Playing by the fire" : panel === "weather" ? "Mausam" : "Ambience"}</h2></div>
           <button className="icon-button" onClick={() => setPanel(null)} aria-label="Close panel"><Icon name="close" /></button>
         </div>
-        {panel === "playlist" && <div className="track-list">{tracks.map((item, i) => <button key={item.id} className={i === track ? "active" : ""} onClick={() => { setTrack(i); setProgress(0); setPlaying(true); setSpotifyOpen(true); }}><span className="track-no">{i === track && playing ? <b className="wave">▮▮▮</b> : String(i + 1).padStart(2, "0")}</span><span><strong>{item.title}</strong><small>{item.artist}</small></span><time>Spotify</time></button>)}</div>}
+        {panel === "playlist" && <div className="track-list">{tracks.map((item, i) => <button key={item.id} className={i === track ? "active" : ""} onClick={() => chooseTrack(i)}><span className="track-no">{i === track && playing ? <b className="wave">▮▮▮</b> : String(i + 1).padStart(2, "0")}</span><span><strong>{item.title}</strong><small>{item.artist}</small></span><time>{item.format.toUpperCase()}</time></button>)}</div>}
         {panel === "weather" && <div className="weather-list"><div className="mode-switch"><button className="selected">Choose my mood</button><button onClick={() => notify("Live weather is coming soon.")}>Live Mausam</button></div>{weatherOptions.map((item) => <button key={item.key} className={weather === item.key ? "active" : ""} onClick={() => chooseWeather(item.key)}><span className={`weather-symbol ${item.key}`} /><span><strong>{item.label}</strong><small>{item.note}</small></span>{weather === item.key && <i>Now</i>}</button>)}</div>}
         {panel === "ambience" && <div className="mixer">{Object.entries(mix).map(([name, value]) => <label key={name}><span><strong>{name}</strong><small>{value === 0 ? "off" : `${value}%`}</small></span><input aria-label={`${name} ambience level`} type="range" min="0" max="100" value={value} onChange={(e) => setMix({ ...mix, [name]: Number(e.target.value) })} /></label>)}<p>Music stays in front. The night stays close.</p></div>}
       </aside>
       {panel && <button className="scrim" aria-label="Close panel" onClick={() => setPanel(null)} />}
 
       <section className="player" aria-label="Now playing">
+        <audio ref={audioRef} preload="metadata" onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onTimeUpdate={(event) => { const audio=event.currentTarget; setElapsed(audio.currentTime); setProgress(audio.duration ? audio.currentTime/audio.duration*100 : 0); }} onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>changeTrack(1)} onError={()=>notify("This track could not be loaded.")}><source src={current.src} type={current.format === "mp4" ? "video/mp4" : "audio/mpeg"} /></audio>
         <VinylPlayer artwork={current.artwork} title={current.title} isPlaying={playing} />
         <div className="song"><small>Now playing · {current.mood}</small><strong>{current.title}</strong><span>{current.artist}</span></div>
         <div className="transport">
           <button className={liked ? "liked" : ""} aria-label="Like this song" onClick={() => setLiked(!liked)}><Icon name="heart" /></button>
           <button aria-label="Previous song" onClick={() => changeTrack(-1)}><Icon name="prev" /></button>
-          <button className="play" aria-label={playing ? "Pause music" : "Play music"} onClick={() => { if (!playing) { setSpotifyOpen(true); notify("Press play in Spotify — direct audio links will connect this control."); } setPlaying(!playing); }}><Icon name={playing ? "pause" : "play"} /></button>
+          <button className="play" aria-label={playing ? "Pause music" : "Play music"} onClick={() => setPlaying(!playing)}><Icon name={playing ? "pause" : "play"} /></button>
           <button aria-label="Next song" onClick={() => changeTrack(1)}><Icon name="next" /></button>
-          <button aria-label="Volume"><Icon name="volume" /></button>
+          <label className="volume-control" aria-label="Music volume"><Icon name="volume" /><input type="range" min="0" max="1" step=".01" value={volume} onChange={(event)=>setVolume(Number(event.target.value))} /></label>
         </div>
-        <div className="timeline"><time>{playing ? "Live" : "—"}</time><input aria-label="Visual song progress" type="range" min="0" max="100" value={progress} onChange={(e) => setProgress(Number(e.target.value))} /><time>Spotify</time></div>
-      </section>
-      <section className={`spotify-dock ${spotifyOpen ? "open" : ""}`} aria-label="Spotify music player">
-        <button className="spotify-close" onClick={()=>setSpotifyOpen(false)} aria-label="Close Spotify player"><Icon name="close" /></button>
-        <iframe key={current.id} title={`${current.title} on Spotify`} src={`https://open.spotify.com/embed/track/${current.id}?utm_source=generator&theme=0`} width="100%" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />
+        <div className="timeline"><time>{formatTime(elapsed)}</time><input aria-label="Song position" type="range" min="0" max="100" value={progress} onChange={(e) => seek(Number(e.target.value))} /><time>{formatTime(duration)}</time></div>
       </section>
       <div className="love-line" aria-live="polite" key={quote}>{loveLines[quote]}</div>
       <div className={`toast ${toast ? "show" : ""}`} role="status">{toast}</div>
