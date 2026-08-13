@@ -196,7 +196,11 @@ export default function Home() {
   return (
     <main className={`cafe weather-${weather} ${entered ? "is-entered" : "is-arriving"}`}>
       <div className="scene" role="img" aria-label="A hidden open-air café above a mountain stream in an endless night">
-        <picture className="scene-photo" aria-hidden="true"><img src="/cafe-cinematic-clean.png" alt="" /></picture>
+        <div className="scene-photo" aria-hidden="true">
+          <video autoPlay muted loop playsInline preload="metadata" poster="/cafe-cinematic-clean.png">
+            <source src="https://7nlovhkqx2zbld4k.public.blob.vercel-storage.com/Video%20-%20tst" type="video/mp4" />
+          </video>
+        </div>
         <div className="clouds" /><div className="fog fog-a" /><div className="fog fog-b" />
         <div className="river-shimmer" />
         <button className="fire" aria-label="Warm the bonfire" onClick={() => { notify("That’s better."); document.querySelector(".fire")?.classList.add("stoked"); setTimeout(() => document.querySelector(".fire")?.classList.remove("stoked"), 2500); }}><span className="heat" /><span className="ember e1" /><span className="ember e2" /></button>

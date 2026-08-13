@@ -11,7 +11,7 @@ button:focus-visible,input:focus-visible { outline:1px solid #ffd28f; outline-of
 .scene,.scene-photo,.clouds,.fog,.river-shimmer,.weather-canvas,.wet-sheen,.grain,.vignette { position:absolute; inset:0; pointer-events:none; }
 .scene { z-index:0; overflow:hidden; background:#03070b; }
 .scene-photo { overflow:hidden; transform:scale(1.012); transition:filter 3s ease, opacity 2s ease; animation:scene-arrive 2.4s cubic-bezier(.2,.8,.2,1) both, living-scene 18s 2.4s ease-in-out infinite alternate; will-change:transform; }
-.scene-photo img{width:100%;height:100%;display:block;object-fit:cover;object-position:center;transform:scale(1.006);animation:cinemagraph-breathe 14s ease-in-out infinite alternate}
+.scene-photo video{width:100%;height:100%;display:block;object-fit:cover;object-position:center;transform:scale(1.006)}
 .weather-clear .scene-photo { filter:saturate(.9) brightness(.82) contrast(1.02); }
 .weather-drizzle .scene-photo { filter:saturate(.78) brightness(.72) contrast(1.04) hue-rotate(-4deg); }
 .weather-rain .scene-photo { filter:saturate(.72) brightness(.66) contrast(1.07) hue-rotate(-5deg); }
