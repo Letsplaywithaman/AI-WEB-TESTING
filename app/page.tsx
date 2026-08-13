@@ -196,10 +196,9 @@ export default function Home() {
   return (
     <main className={`cafe weather-${weather} ${entered ? "is-entered" : "is-arriving"}`}>
       <div className="scene" role="img" aria-label="A hidden open-air café above a mountain stream in an endless night">
-        <div className="scene-photo" />
+        <picture className="scene-photo" aria-hidden="true"><img src="/cafe-cinematic-clean.png" alt="" /></picture>
         <div className="clouds" /><div className="fog fog-a" /><div className="fog fog-b" />
         <div className="river-shimmer" />
-        <div className="light-string light-string-a">{Array.from({ length: 10 }, (_, i) => <i key={i} />)}</div>
         <button className="fire" aria-label="Warm the bonfire" onClick={() => { notify("That’s better."); document.querySelector(".fire")?.classList.add("stoked"); setTimeout(() => document.querySelector(".fire")?.classList.remove("stoked"), 2500); }}><span className="heat" /><span className="ember e1" /><span className="ember e2" /></button>
         <button className="free-chair" onClick={() => notify("This one’s free.")} aria-label="An empty chair"><span>This one’s free.</span></button>
         <WeatherCanvas weather={weather} />
@@ -241,7 +240,7 @@ export default function Home() {
         <div className="transport">
           <button className={liked ? "liked" : ""} aria-label="Like this song" onClick={() => setLiked(!liked)}><Icon name="heart" /></button>
           <button aria-label="Previous song" onClick={() => changeTrack(-1)}><Icon name="prev" /></button>
-          <button className="play" aria-label="Open Spotify player" onClick={() => { setSpotifyOpen(true); setPlaying(true); notify("Press play in Spotify — the café will stay open."); }}><Icon name={playing ? "pause" : "play"} /></button>
+          <button className="play" aria-label="Open Spotify player" onClick={() => { setSpotifyOpen(true); setPlaying(true); notify("Press play in Spotify — the café will stay open."); }}><Icon name="play" /></button>
           <button aria-label="Next song" onClick={() => changeTrack(1)}><Icon name="next" /></button>
           <button aria-label="Volume"><Icon name="volume" /></button>
         </div>
