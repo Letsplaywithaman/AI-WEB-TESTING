@@ -160,7 +160,7 @@ function useNatureAudio(entered:boolean, weather:Weather, mix:Record<string,numb
   },[weather,mix]);
 }
 
-function Icon({ name }: { name: "play" | "pause" | "next" | "prev" | "heart" | "close" | "volume" }) {
+function Icon({ name }: { name: "play" | "pause" | "next" | "prev" | "heart" | "close" | "volume" | "fullscreen" | "fullscreenExit" }) {
   const paths = {
     play: <path d="M9 6l10 6-10 6V6z" fill="currentColor" />,
     pause: <><path d="M8 6h3v12H8zM14 6h3v12h-3z" fill="currentColor" /></>,
@@ -169,6 +169,8 @@ function Icon({ name }: { name: "play" | "pause" | "next" | "prev" | "heart" | "
     heart: <path d="M12 20s-7-4.3-7-9a4 4 0 017-2.6A4 4 0 0119 11c0 4.7-7 9-7 9z" fill="none" stroke="currentColor" strokeWidth="1.5" />,
     close: <path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" strokeWidth="1.5" />,
     volume: <><path d="M5 10v4h3l4 4V6L8 10H5z" fill="currentColor" /><path d="M15 9a4 4 0 010 6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></>,
+    fullscreen: <path d="M8.5 4H4v4.5M15.5 4H20v4.5M20 15.5V20h-4.5M8.5 20H4v-4.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />,
+    fullscreenExit: <path d="M9 4v5H4M15 4v5h5M20 15h-5v5M4 15h5v5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />,
   };
   return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
 }
@@ -203,6 +205,7 @@ function VinylPlayer({ artwork, title, isPlaying }: { artwork: string; title: st
 }
 
 export default function Home() {
+  const cafeRef = useRef<HTMLElement>(null);
   const [entered, setEntered] = useState(false);
   const [panel, setPanel] = useState<Panel>(null);
   const [weather, setWeather] = useState<Weather>("rain");
@@ -216,6 +219,7 @@ export default function Home() {
   const [toast, setToast] = useState("");
   const [mix, setMix] = useState(initialMix);
   const [quote, setQuote] = useState(0);
+  const [fullscreen, setFullscreen] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const playIntent = useRef(false);
   const failedTracks = useRef(new Set<number>());
@@ -223,6 +227,21 @@ export default function Home() {
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const current = tracks[track];
   useNatureAudio(entered, weather, mix);
+
+  useEffect(() => {
+    const syncFullscreen = () => setFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", syncFullscreen);
+    return () => document.removeEventListener("fullscreenchange", syncFullscreen);
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await cafeRef.current?.requestFullscreen({ navigationUI: "hide" });
+    } catch {
+      notify("Fullscreen is not available in this browser.");
+    }
+  };
 
   useEffect(() => {
     const stored = localStorage.getItem("you-feel-like-home-preferences");
@@ -306,7 +325,7 @@ export default function Home() {
   };
 
   return (
-    <main className={`cafe weather-${weather} ${entered ? "is-entered" : "is-arriving"}`}>
+    <main ref={cafeRef} className={`cafe weather-${weather} ${entered ? "is-entered" : "is-arriving"}`}>
       <div className="scene" role="img" aria-label="A hidden open-air café above a mountain stream in an endless night">
         <SeamlessBackgroundVideo />
         <div className="clouds" /><div className="fog fog-a" /><div className="fog fog-b" />
@@ -362,6 +381,9 @@ export default function Home() {
       <div className="love-line" aria-live="polite" key={quote}>{loveLines[quote]}</div>
       <div className={`toast ${toast ? "show" : ""}`} role="status">{toast}</div>
       <div className="location"><span>11:47 PM</span><i /> Past the last light, somewhere quiet</div>
+      <button className="fullscreen-button" onClick={toggleFullscreen} aria-label={fullscreen ? "Exit fullscreen" : "Enter fullscreen"} title={fullscreen ? "Exit fullscreen" : "Fullscreen view"}>
+        <Icon name={fullscreen ? "fullscreenExit" : "fullscreen"} />
+      </button>
     </main>
   );
 }
