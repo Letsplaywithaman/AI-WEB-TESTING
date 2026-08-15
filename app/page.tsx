@@ -218,6 +218,8 @@ export default function Home() {
   const [mix, setMix] = useState(initialMix);
   const [quote, setQuote] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const playIntent = useRef(false);
+  const failedTracks = useRef(new Set<number>());
   const trackHistory = useRef<number[]>([]);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const current = tracks[track];
@@ -245,14 +247,11 @@ export default function Home() {
     const audio = audioRef.current;
     if (!audio) return;
     audio.load(); setElapsed(0); setDuration(0); setProgress(0);
-    if (playing) void audio.play().catch(() => setPlaying(false));
+    if (!playIntent.current) return;
+    const resume = () => void audio.play().catch(() => setPlaying(false));
+    audio.addEventListener("canplay", resume, { once: true });
+    return () => audio.removeEventListener("canplay", resume);
   }, [track]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (playing) void audio.play().catch(() => setPlaying(false)); else audio.pause();
-  }, [playing]);
 
   useEffect(() => {
     if (!entered) return;
@@ -286,7 +285,16 @@ export default function Home() {
     document.documentElement.animate([{ filter: "brightness(1)" }, { filter: "brightness(1.09)" }, { filter: "brightness(1)" }], { duration: 900 });
   };
 
-  const chooseTrack = (index: number) => { if (index !== track) trackHistory.current.push(track); setTrack(index); setPlaying(true); setPanel(null); };
+  const beginPlayback = () => { const audio=audioRef.current; playIntent.current=true; setPlaying(true); if (audio) void audio.play().catch(()=>setPlaying(false)); };
+  const togglePlayback = () => { const audio=audioRef.current; if (!audio) return; if (playing) { playIntent.current=false; audio.pause(); setPlaying(false); } else beginPlayback(); };
+  const chooseTrack = (index: number) => { if (index !== track) trackHistory.current.push(track); playIntent.current=true; setTrack(index); setPlaying(true); setPanel(null); };
+  const handleTrackEnd = () => { playIntent.current=true; setPlaying(true); changeTrack(1); };
+  const handleTrackError = () => {
+    failedTracks.current.add(track);
+    notify(`${current.title} is unavailable — skipping it.`);
+    if (failedTracks.current.size < tracks.length) { playIntent.current=true; setPlaying(true); changeTrack(1); }
+    else { playIntent.current=false; setPlaying(false); }
+  };
   const seek = (value: number) => { const audio = audioRef.current; if (!audio || !duration) return; audio.currentTime = value / 100 * duration; };
   const formatTime = (seconds: number) => Number.isFinite(seconds) ? `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2,"0")}` : "0:00";
 
@@ -314,7 +322,7 @@ export default function Home() {
         <p className="eyebrow">Somewhere beyond the last road</p>
         <h1>The night found us.<br /><em>The fire kept us here.</em></h1>
         <p className="entry-note">It’s cold outside. Come in.</p>
-        <button className="enter-button" onClick={() => { setEntered(true); setPlaying(true); notify("Take your time."); }}>STEP IN, STAY A WHILE <span>→</span></button>
+        <button className="enter-button" onClick={() => { setEntered(true); beginPlayback(); notify("Take your time."); }}>STEP IN, STAY A WHILE <span>→</span></button>
         <small>Sound begins only when you enter</small>
       </section>
 
@@ -340,13 +348,13 @@ export default function Home() {
       {panel && <button className="scrim" aria-label="Close panel" onClick={() => setPanel(null)} />}
 
       <section className="player" aria-label="Now playing">
-        <audio ref={audioRef} preload="metadata" onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onTimeUpdate={(event) => { const audio=event.currentTarget; setElapsed(audio.currentTime); setProgress(audio.duration ? audio.currentTime/audio.duration*100 : 0); }} onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>changeTrack(1)} onError={()=>notify("This track could not be loaded.")}><source src={current.src} type={current.format === "mp4" ? "video/mp4" : "audio/mpeg"} /></audio>
+        <audio ref={audioRef} preload="auto" onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onTimeUpdate={(event) => { const audio=event.currentTarget; setElapsed(audio.currentTime); setProgress(audio.duration ? audio.currentTime/audio.duration*100 : 0); }} onPlay={()=>{failedTracks.current.delete(track);setPlaying(true)}} onEnded={handleTrackEnd} onError={handleTrackError}><source src={current.src} type={current.format === "mp4" ? "video/mp4" : "audio/mpeg"} /></audio>
         <VinylPlayer artwork={current.artwork} title={current.title} isPlaying={playing} />
         <div className="song"><small>Now playing · {current.mood}</small><strong>{current.title}</strong><span>{current.artist}</span></div>
         <div className="transport">
           <button className={liked ? "liked" : ""} aria-label="Like this song" onClick={() => setLiked(!liked)}><Icon name="heart" /></button>
           <button aria-label="Previous song" onClick={() => changeTrack(-1)}><Icon name="prev" /></button>
-          <button className="play" aria-label={playing ? "Pause music" : "Play music"} onClick={() => setPlaying(!playing)}><Icon name={playing ? "pause" : "play"} /></button>
+          <button className="play" aria-label={playing ? "Pause music" : "Play music"} onClick={togglePlayback}><Icon name={playing ? "pause" : "play"} /></button>
           <button aria-label="Next song" onClick={() => changeTrack(1)}><Icon name="next" /></button>
           <label className="volume-control" aria-label="Music volume"><Icon name="volume" /><input type="range" min="0" max="1" step=".01" value={volume} onChange={(event)=>setVolume(Number(event.target.value))} /></label>
         </div>
